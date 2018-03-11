@@ -1114,6 +1114,7 @@ impl<I, J> Iterator for Flatten<I, J>
 ///
 /// See [`.map_results()`](../trait.Itertools.html#method.map_results) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+#[derive(Debug)]
 pub struct MapResults<I, F> {
     iter: I,
     f: F
@@ -1163,6 +1164,7 @@ impl<I, F, T, U, E> Iterator for MapResults<I, F>
 ///
 /// See [`.positions()`](../trait.Itertools.html#method.positions) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+#[derive(Debug)]
 pub struct Positions<I, F> {
     iter: I,
     f: F,
@@ -1221,6 +1223,7 @@ impl<I, F> DoubleEndedIterator for Positions<I, F>
 ///
 /// See [`.update()`](../trait.Itertools.html#method.update) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+#[derive(Debug)]
 pub struct Update<I, F> {
     iter: I,
     f: F,

@@ -19,6 +19,7 @@ impl<'a, A, K, F: ?Sized> KeyFunction<A> for F
 
 
 /// ChunkIndex acts like the grouping key function for IntoChunks
+#[derive(Debug)]
 struct ChunkIndex {
     size: usize,
     index: usize,
@@ -50,6 +51,7 @@ impl<'a, A> KeyFunction<A> for ChunkIndex {
 }
 
 
+#[derive(Debug)]
 struct GroupInner<K, I, F>
     where I: Iterator
 {

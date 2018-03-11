@@ -7,7 +7,7 @@ use size_hint;
 /// Iterator element type is `I::Item`.
 ///
 /// See [`.pad_using()`](../trait.Itertools.html#method.pad_using) for more information.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
 pub struct PadUsing<I, F> {
     iter: Fuse<I>,
