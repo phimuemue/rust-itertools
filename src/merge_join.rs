@@ -25,6 +25,7 @@ pub fn merge_join_by<I, J, F>(left: I, right: J, cmp_fn: F)
 ///
 /// See [`.merge_join_by()`](../trait.Itertools.html#method.merge_join_by) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+//TODO(Debug)
 pub struct MergeJoinBy<I: Iterator, J: Iterator, F> {
     left: PutBack<Fuse<I>>,
     right: PutBack<Fuse<J>>,

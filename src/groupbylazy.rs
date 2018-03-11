@@ -287,6 +287,7 @@ impl<K, I, F> GroupInner<K, I, F>
 ///
 /// See [`.group_by()`](../trait.Itertools.html#method.group_by) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+//TODO(Debug)
 pub struct GroupBy<K, I, F>
     where I: Iterator,
 {
@@ -357,6 +358,7 @@ impl<'a, K, I, F> IntoIterator for &'a GroupBy<K, I, F>
 ///
 /// See [`.group_by()`](../trait.Itertools.html#method.group_by) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+//TODO(Debug)
 pub struct Groups<'a, K: 'a, I: 'a, F: 'a>
     where I: Iterator,
           I::Item: 'a
@@ -391,6 +393,7 @@ impl<'a, K, I, F> Iterator for Groups<'a, K, I, F>
 /// An iterator for the elements in a single group.
 ///
 /// Iterator element type is `I::Item`.
+/// //TODO(Debug)
 pub struct Group<'a, K: 'a, I: 'a, F: 'a>
     where I: Iterator,
           I::Item: 'a,
@@ -463,6 +466,7 @@ pub fn new_chunks<J>(iter: J, size: usize) -> IntoChunks<J::IntoIter>
 ///
 /// See [`.chunks()`](../trait.Itertools.html#method.chunks) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+//TODO(Debug)
 pub struct IntoChunks<I>
     where I: Iterator,
 {
@@ -508,6 +512,7 @@ impl<'a, I> IntoIterator for &'a IntoChunks<I>
 ///
 /// See [`.chunks()`](../trait.Itertools.html#method.chunks) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+//TODO(Debug)
 pub struct Chunks<'a, I: 'a>
     where I: Iterator,
           I::Item: 'a,
@@ -539,6 +544,7 @@ impl<'a, I> Iterator for Chunks<'a, I>
 /// An iterator for the elements in a single chunk.
 ///
 /// Iterator element type is `I::Item`.
+//TODO(Debug)
 pub struct Chunk<'a, I: 'a>
     where I: Iterator,
           I::Item: 'a,

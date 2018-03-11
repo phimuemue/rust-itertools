@@ -12,6 +12,7 @@ use Itertools;
 /// See [`.multi_cartesian_product()`](../trait.Itertools.html#method.multi_cartesian_product)
 /// for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+//TODO(Debug)
 pub struct MultiProduct<I>(Vec<MultiProductIter<I>>)
     where I: Iterator + Clone,
           I::Item: Clone;

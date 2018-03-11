@@ -6,6 +6,7 @@ use std::fmt;
 ///
 /// See [`.combinations()`](../trait.Itertools.html#method.combinations) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+//TODO(Debug)
 pub struct Combinations<I: Iterator> {
     n: usize,
     indices: Vec<usize>,

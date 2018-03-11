@@ -9,6 +9,7 @@ use std::fmt;
 /// See [`.unique_by()`](../trait.Itertools.html#method.unique) for more information.
 #[derive(Clone)]
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+//TODO(Debug)
 pub struct UniqueBy<I: Iterator, V, F> {
     iter: I,
     // Use a hashmap for the entry API
@@ -108,6 +109,7 @@ impl<I> Iterator for Unique<I>
 ///
 /// See [`.unique()`](../trait.Itertools.html#method.unique) for more information.
 #[derive(Clone)]
+//TODO(Debug)
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
 pub struct Unique<I: Iterator> {
     iter: UniqueBy<I, I::Item, ()>,

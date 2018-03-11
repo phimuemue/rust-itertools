@@ -12,6 +12,7 @@ use structs::PutBack;
 ///
 /// `Diff` represents the way in which the elements yielded by the iterator `I` differ to some
 /// iterator `J`.
+//TODO(Debug)
 pub enum Diff<I, J>
     where I: Iterator,
           J: Iterator

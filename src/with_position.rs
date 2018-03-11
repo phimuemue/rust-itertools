@@ -6,6 +6,7 @@ use std::iter::{Fuse,Peekable};
 ///
 /// See [`.with_position()`](../trait.Itertools.html#method.with_position) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+//TODO(Debug)
 pub struct WithPosition<I>
     where I: Iterator,
 {

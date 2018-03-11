@@ -112,6 +112,7 @@ fn sift_down<T, S>(heap: &mut [T], index: usize, mut less_than: S)
 ///
 /// See [`.kmerge()`](../trait.Itertools.html#method.kmerge) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+//TODO(Debug)
 pub struct KMerge<I>
     where I: Iterator
 {
@@ -194,6 +195,7 @@ impl<I> Iterator for KMerge<I>
 /// See [`.kmerge_by()`](../trait.Itertools.html#method.kmerge_by) for more
 /// information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
+//TODO(Debug)
 pub struct KMergeBy<I, F>
     where I: Iterator,
 {

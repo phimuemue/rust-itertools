@@ -22,6 +22,7 @@ pub struct FormatWith<'a, I, F> {
 /// See [`.format()`](../trait.Itertools.html#method.format)
 /// for more information.
 #[derive(Clone)]
+//TODO(Debug)
 pub struct Format<'a, I> {
     sep: &'a str,
     /// Format uses interior mutability because Display::fmt takes &self.
