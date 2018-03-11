@@ -369,7 +369,6 @@ impl<I, J> Iterator for Product<I, J>
 ///
 /// See [`.batching()`](../trait.Itertools.html#method.batching) for more information.
 #[derive(Clone)]
-//TODO(Debug)
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
 pub struct Batching<I, F> {
     f: F,
@@ -461,7 +460,6 @@ impl<I> ExactSizeIterator for Step<I>
 {}
 
 
-//TODO(Debug)
 struct MergeCore<I, J>
     where I: Iterator,
           J: Iterator<Item = I::Item>
@@ -600,7 +598,6 @@ impl<I, J> Iterator for Merge<I, J>
 ///
 /// See [`.merge_by()`](../trait.Itertools.html#method.merge_by) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
-//TODO(Debug)
 pub struct MergeBy<I, J, F>
     where I: Iterator,
           J: Iterator<Item = I::Item>
@@ -702,7 +699,6 @@ impl<I> CoalesceCore<I>
 ///
 /// See [`.coalesce()`](../trait.Itertools.html#method.coalesce) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
-//TODO(Debug)
 pub struct Coalesce<I, F>
     where I: Iterator
 {
@@ -758,7 +754,6 @@ impl<I, F> Iterator for Coalesce<I, F>
 ///
 /// See [`.dedup()`](../trait.Itertools.html#method.dedup) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
-//TODO(Debug)
 pub struct Dedup<I>
     where I: Iterator
 {
@@ -832,7 +827,6 @@ impl<I> Iterator for Dedup<I>
 ///
 /// See [`.take_while_ref()`](../trait.Itertools.html#method.take_while_ref) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
-//TODO(Debug)
 pub struct TakeWhileRef<'a, I: 'a, F> {
     iter: &'a mut I,
     f: F,
