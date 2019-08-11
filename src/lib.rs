@@ -1974,23 +1974,25 @@ pub trait Itertools : Iterator {
     /// use itertools::Itertools;
     ///
     /// let a: [i32; 0] = [];
-    /// assert_eq!(a.iter().min_set(), None);
+    /// assert_eq!(a.iter().min_set::<Vec<_>>(), None);
     ///
     /// let a = [1];
-    /// assert_eq!(a.iter().min_set(), Some(vec![&1]));
+    /// assert_eq!(a.iter().min_set::<Vec<_>>(), Some(vec![&1]));
     ///
     /// let a = [1, 2, 3, 4, 5];
-    /// assert_eq!(a.iter().min_set(), Some(vec![&1]));
+    /// assert_eq!(a.iter().min_set::<Vec<_>>(), Some(vec![&1]));
     ///
     /// let a = [1, 1, 1, 1];
-    /// assert_eq!(a.iter().min_set(), Some(vec![&1, &1, &1, &1]));
+    /// assert_eq!(a.iter().min_set::<Vec<_>>(), Some(vec![&1, &1, &1, &1]));
     /// ```
     ///
     /// The elements can be floats but no particular result is guaranteed
     /// if an element is NaN.
     #[cfg(feature = "use_std")]
-    fn min_set(self) -> Option<Vec<Self::Item>>
-        where Self: Sized, Self::Item: PartialOrd
+    fn min_set<R>(self) -> Option<R>
+        where
+            Self: Sized, Self::Item: PartialOrd,
+            R: std::iter::FromIterator<Self::Item> + std::iter::Extend<Self::Item> + extrema_set::ReferenceToAnElement<Self::Item>,
     {
         extrema_set::min_set_impl(self, |_| (), |x, y, _, _| x < y)
     }
@@ -2068,23 +2070,25 @@ pub trait Itertools : Iterator {
     /// use itertools::Itertools;
     ///
     /// let a: [i32; 0] = [];
-    /// assert_eq!(a.iter().max_set(), None);
+    /// assert_eq!(a.iter().max_set::<Vec<_>>(), None);
     ///
     /// let a = [1];
-    /// assert_eq!(a.iter().max_set(), Some(vec![&1]));
+    /// assert_eq!(a.iter().max_set::<Vec<_>>(), Some(vec![&1]));
     ///
     /// let a = [1, 2, 3, 4, 5];
-    /// assert_eq!(a.iter().max_set(), Some(vec![&5]));
+    /// assert_eq!(a.iter().max_set::<Vec<_>>(), Some(vec![&5]));
     ///
     /// let a = [1, 1, 1, 1];
-    /// assert_eq!(a.iter().max_set(), Some(vec![&1, &1, &1, &1]));
+    /// assert_eq!(a.iter().max_set::<Vec<_>>(), Some(vec![&1, &1, &1, &1]));
     /// ```
     ///
     /// The elements can be floats but no particular result is guaranteed
     /// if an element is NaN.
     #[cfg(feature = "use_std")]
-    fn max_set(self) -> Option<Vec<Self::Item>>
-        where Self: Sized, Self::Item: PartialOrd
+    fn max_set<R>(self) -> Option<R>
+        where
+            Self: Sized, Self::Item: PartialOrd,
+            R: std::iter::FromIterator<Self::Item> + std::iter::Extend<Self::Item> + extrema_set::ReferenceToAnElement<Self::Item>,
     {
         extrema_set::max_set_impl(self, |_| (), |x, y, _, _| x < y)
     }
