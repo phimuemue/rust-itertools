@@ -588,6 +588,35 @@ fn combinations() {
 }
 
 #[test]
+fn combinations_combinatorial_count() {
+    fn count_combinations(n: usize, k: usize) -> usize {
+        if k==0 || k==n {
+            1
+        } else if k>n {
+            0
+        } else {
+            count_combinations(n-1, k-1) + count_combinations(n-1, k)
+        }
+    }
+    for n in 0..12 {
+        for k in 0..12 {
+            let source_elements = 0..n;
+            let collected = source_elements.clone()
+                .combinations(k)
+                .collect::<Vec<_>>();
+            assert!(collected.windows(2).all(|w| w[0]<w[1])); // also ensures no duplicates
+            assert_eq!(collected.len(), count_combinations(n, k));
+            for cmb in collected {
+                assert_eq!(cmb.len(), k);
+                for x in cmb {
+                    assert!(source_elements.contains(&x));
+                }
+            }
+        }
+    }
+}
+
+#[test]
 fn combinations_of_too_short() {
     for i in 1..10 {
         assert!((0..0).combinations(i).next().is_none());
