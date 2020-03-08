@@ -90,15 +90,15 @@ where
                 return None;
             } else {
                 // bump the back number until value in pool increases
-                let mut lastpos = self.indices[len - 1];
+                let lastpos = self.indices[len - 1];
                 let val = &self.pool[lastpos];
-                lastpos += 1;
-                let mut next = &self.pool[lastpos];
+                let mut j = lastpos + 1;
+                let mut next = &self.pool[j];
                 while next == val {
-                    lastpos += 1;
-                    next = &self.pool[lastpos];
+                    j += 1;
+                    next = &self.pool[j];
                 }
-                self.indices[len - 1] = lastpos;
+                self.indices[len - 1] = j;
             }
         }
         self.generate()
