@@ -93,8 +93,7 @@ where
                 let lastpos = self.indices[len - 1];
                 let val = &self.pool[lastpos];
                 for j in lastpos + 1.. {
-                    if self.pool[j]==*val {
-                    } else {
+                    if *val < self.pool[j] {
                         self.indices[len - 1] = j;
                         break;
                     }
