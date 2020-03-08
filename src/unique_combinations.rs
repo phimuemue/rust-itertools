@@ -92,13 +92,13 @@ where
                 // bump the back number until value in pool increases
                 let lastpos = self.indices[len - 1];
                 let val = &self.pool[lastpos];
-                let mut j = lastpos + 1;
-                let mut next = &self.pool[j];
-                while next == val {
-                    j += 1;
-                    next = &self.pool[j];
+                for j in lastpos + 1.. {
+                    if self.pool[j]==*val {
+                    } else {
+                        self.indices[len - 1] = j;
+                        break;
+                    }
                 }
-                self.indices[len - 1] = j;
             }
         }
         self.generate()
