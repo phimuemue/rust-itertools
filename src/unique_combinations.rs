@@ -78,7 +78,8 @@ where
                         let val = &self.pool[lastpos];
                         for j in lastpos + 1..pool_len {
                             if *val < self.pool[j] {
-                                for k in 0..i {
+                                self.indices[len - i] = j;
+                                for k in 1..i {
                                     self.indices[len - i + k] = j + k;
                                 }
                                 return self.generate();
