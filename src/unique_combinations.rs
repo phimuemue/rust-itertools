@@ -91,10 +91,10 @@ where
             } else {
                 // bump the back number until value in pool increases
                 let mut lastpos = self.indices[len - 1];
-                let current = &self.pool[lastpos];
+                let val = &self.pool[lastpos];
                 lastpos += 1;
                 let mut next = &self.pool[lastpos];
-                while next == current {
+                while next == val {
                     lastpos += 1;
                     next = &self.pool[lastpos];
                 }
