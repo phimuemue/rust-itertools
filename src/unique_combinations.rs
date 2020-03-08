@@ -97,6 +97,9 @@ where
                 for j in lastpos + 1..pool_len {
                     if *val < self.pool[j] {
                         self.indices[len - i] = j;
+                        for k in 1..i { // this loop will actually never run
+                            self.indices[len - i + k] = j + k;
+                        }
                         return self.generate();
                     }
                 }
