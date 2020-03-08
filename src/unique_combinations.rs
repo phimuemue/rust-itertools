@@ -92,7 +92,7 @@ where
                 // bump the back number until value in pool increases
                 let lastpos = self.indices[len - 1];
                 let val = &self.pool[lastpos];
-                for j in lastpos + 1.. {
+                for j in lastpos + 1..pool_len {
                     if *val < self.pool[j] {
                         self.indices[len - 1] = j;
                         break;
