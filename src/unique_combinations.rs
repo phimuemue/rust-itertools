@@ -70,8 +70,9 @@ where
             return None;
         } else {
             // locate the back_most digit that can be bumped
-            for back_offset in 1..=indices_len {
+            for (back_offset, i_aux) in (1..=indices_len).zip((0..=indices_len-1).rev()) {
                 let i = indices_len - back_offset;
+                assert_eq!(i, i_aux);
                 assert_eq!(back_offset, indices_len - i);
                 if self.pool[self.indices[i]]
                     < self.pool[pool_len - (indices_len - i)]
