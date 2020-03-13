@@ -71,17 +71,18 @@ where
         } else {
             // locate the back_most digit that can be bumped
             for back_offset in 1..=indices_len {
-                if self.pool[self.indices[indices_len - back_offset]]
+                let i = indices_len - back_offset;
+                if self.pool[self.indices[i]]
                     < self.pool[pool_len - back_offset]
                 {
-                    let bump_source = self.indices[indices_len - back_offset];
+                    let bump_source = self.indices[i];
                     let bump_value = &self.pool[bump_source];
                     // locate the position where the number needs to be set
                     for bump_target in bump_source + 1..pool_len {
                         if *bump_value < self.pool[bump_target] {
                             //sets all the indices right of the bump_target
                             for k in 0..back_offset {
-                                self.indices[indices_len - back_offset + k] = bump_target + k;
+                                self.indices[i + k] = bump_target + k;
                             }
                             return self.generate();
                         }
