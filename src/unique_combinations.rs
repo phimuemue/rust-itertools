@@ -72,8 +72,9 @@ where
             // locate the back_most digit that can be bumped
             for back_offset in 1..=indices_len {
                 let i = indices_len - back_offset;
+                assert_eq!(back_offset, indices_len - i);
                 if self.pool[self.indices[i]]
-                    < self.pool[pool_len - back_offset]
+                    < self.pool[pool_len - (indices_len - i)]
                 {
                     let bump_source = self.indices[i];
                     let bump_value = &self.pool[bump_source];
@@ -81,7 +82,7 @@ where
                     for bump_target in bump_source + 1..pool_len {
                         if *bump_value < self.pool[bump_target] {
                             //sets all the indices right of the bump_target
-                            for k in 0..back_offset {
+                            for k in 0..(indices_len - i) {
                                 self.indices[i + k] = bump_target + k;
                             }
                             return self.generate();
