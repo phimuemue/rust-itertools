@@ -73,10 +73,9 @@ where
             for i in (0..=indices_len-1).rev() {
                 if self.pool[self.indices[i]] != self.pool[i + pool_len - indices_len] {
                     let bump_source = self.indices[i];
-                    let bump_value = &self.pool[bump_source];
                     // locate the position where the number needs to be set
                     for bump_target in bump_source + 1..pool_len {
-                        if *bump_value < self.pool[bump_target] {
+                        if self.pool[bump_source] < self.pool[bump_target] {
                             //sets all the indices right of the bump_target
                             self.indices[i] = bump_target;
                             for j in i+1..indices_len {
