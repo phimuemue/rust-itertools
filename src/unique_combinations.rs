@@ -75,7 +75,7 @@ where
                     let bump_source = self.indices[i];
                     // locate the position where the number needs to be set
                     for bump_target in bump_source + 1..pool_len {
-                        if self.pool[bump_source] < self.pool[bump_target] {
+                        if self.pool[bump_source] < self.pool[bump_target] { // must be true for at least one bump_target
                             //sets all the indices right of the bump_target
                             self.indices[i] = bump_target;
                             for j in i+1..indices_len {
@@ -84,6 +84,7 @@ where
                             return self.generate();
                         }
                     }
+                    assert!(false);
                 }
             }
             return None;
