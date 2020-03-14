@@ -41,17 +41,6 @@ where
     }
 }
 
-impl<I> UniqueCombinations<I>
-where
-    I: Iterator,
-    I::Item: Ord + Clone,
-{
-    #[inline]
-    fn generate(&self) -> Option<Vec<I::Item>> {
-        Some(self.indices.iter().map(|n| self.pool[*n].clone()).collect())
-    }
-}
-
 impl<I> Iterator for UniqueCombinations<I>
 where
     I: Iterator,
@@ -92,6 +81,6 @@ where
                 }
             }
         }
-        self.generate()
+        Some(self.indices.iter().map(|n| self.pool[*n].clone()).collect())
     }
 }
