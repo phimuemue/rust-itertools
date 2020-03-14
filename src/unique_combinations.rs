@@ -71,28 +71,27 @@ where
         } else {
             // locate the back_most digit that can be bumped
             let mut i = indices_len - 1;
-            while true {
-                if self.pool[self.indices[i]] != self.pool[i + pool_len - indices_len] {
-                    let bump_source = self.indices[i];
-                    // locate the position where the number needs to be set
-                    for bump_target in bump_source + 1..pool_len {
-                        if self.pool[bump_source] < self.pool[bump_target] { // must be true for at least one bump_target
-                            //sets all the indices right of the bump_target
-                            self.indices[i] = bump_target;
-                            for j in i+1..indices_len {
-                                self.indices[j] = self.indices[j - 1] + 1;
-                            }
-                            return self.generate();
-                        }
-                    }
-                    assert!(false);
+            while self.pool[self.indices[i]] == self.pool[i + pool_len - indices_len] {
+                if i==0 {
+                    return None;
                 } else {
-                    if i==0 {
-                        break;
-                    }
                     i -= 1;
                 }
             }
+            assert!(self.pool[self.indices[i]] != self.pool[i + pool_len - indices_len]);
+            let bump_source = self.indices[i];
+            // locate the position where the number needs to be set
+            for bump_target in bump_source + 1..pool_len {
+                if self.pool[bump_source] < self.pool[bump_target] { // must be true for at least one bump_target
+                    //sets all the indices right of the bump_target
+                    self.indices[i] = bump_target;
+                    for j in i+1..indices_len {
+                        self.indices[j] = self.indices[j - 1] + 1;
+                    }
+                    return self.generate();
+                }
+            }
+            assert!(false);
             return None;
         }
         self.generate()
