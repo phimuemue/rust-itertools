@@ -86,11 +86,12 @@ where
                         }
                     }
                     assert!(false);
+                } else {
+                    if i==0 {
+                        break;
+                    }
+                    i -= 1;
                 }
-                if i==0 {
-                    break;
-                }
-                i -= 1;
             }
             return None;
         }
