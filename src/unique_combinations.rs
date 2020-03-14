@@ -70,12 +70,8 @@ where
             return None;
         } else {
             // locate the back_most digit that can be bumped
-            let mut i = indices_len;
+            let mut i = indices_len - 1;
             while true {
-                if i==0 {
-                    break;
-                }
-                i -= 1;
                 if self.pool[self.indices[i]] != self.pool[i + pool_len - indices_len] {
                     let bump_source = self.indices[i];
                     // locate the position where the number needs to be set
@@ -91,6 +87,10 @@ where
                     }
                     assert!(false);
                 }
+                if i==0 {
+                    break;
+                }
+                i -= 1;
             }
             return None;
         }
