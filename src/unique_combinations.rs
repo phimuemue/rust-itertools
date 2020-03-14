@@ -71,7 +71,6 @@ where
         } else {
             // locate the back_most digit that can be bumped
             for i in (0..=indices_len-1).rev() {
-                assert!(self.pool[self.indices[i]] <= self.pool[i + pool_len - indices_len]); // because pool is sorted
                 if self.pool[self.indices[i]] != self.pool[i + pool_len - indices_len] {
                     let bump_source = self.indices[i];
                     let bump_value = &self.pool[bump_source];
