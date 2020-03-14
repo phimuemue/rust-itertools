@@ -61,10 +61,10 @@ where
             // locate the back_most digit that can be bumped
             let mut i = indices_len - 1;
             while self.pool[self.indices[i]] == self.pool[i + pool_len - indices_len] {
-                if i==0 {
-                    return None;
-                } else {
+                if i > 0 {
                     i -= 1;
+                } else {
+                    return None;
                 }
             }
             assert!(self.pool[self.indices[i]] != self.pool[i + pool_len - indices_len]);
