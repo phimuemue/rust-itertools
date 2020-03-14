@@ -88,11 +88,9 @@ where
                     for j in i+1..indices_len {
                         self.indices[j] = self.indices[j - 1] + 1;
                     }
-                    return self.generate();
+                    break;
                 }
             }
-            assert!(false);
-            return None;
         }
         self.generate()
     }
