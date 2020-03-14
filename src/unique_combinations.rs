@@ -80,6 +80,7 @@ where
                             //sets all the indices right of the bump_target
                             self.indices[i] = bump_target;
                             for k in 1..(indices_len - i) {
+                                assert_eq!(self.indices[i+k-1]+1, bump_target + k);
                                 self.indices[i + k] = bump_target + k;
                             }
                             return self.generate();
