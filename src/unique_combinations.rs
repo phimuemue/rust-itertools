@@ -78,7 +78,8 @@ where
                     for bump_target in bump_source + 1..pool_len {
                         if *bump_value < self.pool[bump_target] {
                             //sets all the indices right of the bump_target
-                            for k in 0..(indices_len - i) {
+                            self.indices[i] = bump_target;
+                            for k in 1..(indices_len - i) {
                                 self.indices[i + k] = bump_target + k;
                             }
                             return self.generate();
