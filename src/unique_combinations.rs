@@ -71,7 +71,10 @@ where
         } else {
             // locate the back_most digit that can be bumped
             let mut i = indices_len;
-            while i > 0 {
+            while true {
+                if i==0 {
+                    break;
+                }
                 i -= 1;
                 if self.pool[self.indices[i]] != self.pool[i + pool_len - indices_len] {
                     let bump_source = self.indices[i];
