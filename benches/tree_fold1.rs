@@ -55,7 +55,7 @@ macro_rules! def_benchs {
 
             pub fn string_format(c: &mut Criterion) {
                 // This goes quadratic with linear `fold1`, so use a smaller
-                // size to not waste too much time in travis.  The allocations
+                // size to not waste too much time in CI.  The allocations
                 // in here are so expensive anyway that it'll still take
                 // way longer per iteration than the other two benchmarks.
                 let v: Vec<u32> = (0.. ($N/4)).collect();
