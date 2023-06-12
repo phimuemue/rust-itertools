@@ -1,7 +1,6 @@
 use std::cmp::Ordering;
 use std::iter::Fuse;
 use std::fmt;
-use std::marker::PhantomData;
 
 use either::Either;
 
@@ -11,7 +10,7 @@ use crate::size_hint::{self, SizeHint};
 #[cfg(doc)]
 use crate::Itertools;
 
-pub trait MergePredicate<I, J, T> {
+pub trait MergePredicate<I, J> {
     type Item;
     fn left(left: I) -> Self::Item;
     fn right(right: J) -> Self::Item;
@@ -23,7 +22,7 @@ pub trait MergePredicate<I, J, T> {
 ///
 /// [`IntoIterator`] enabled version of [`Itertools::merge_join_by`].
 pub fn merge_join_by<I, J, F, T>(left: I, right: J, cmp_fn: F)
-    -> MergeJoinBy<I::IntoIter, J::IntoIter, F, T>
+    -> MergeJoinBy<I::IntoIter, J::IntoIter, F>
     where I: IntoIterator,
           J: IntoIterator,
           F: FnMut(&I::Item, &J::Item) -> T,
@@ -32,7 +31,6 @@ pub fn merge_join_by<I, J, F, T>(left: I, right: J, cmp_fn: F)
         left: put_back(left.into_iter().fuse()),
         right: put_back(right.into_iter().fuse()),
         cmp_fn,
-        _t: PhantomData,
     }
 }
 
@@ -40,83 +38,97 @@ pub fn merge_join_by<I, J, F, T>(left: I, right: J, cmp_fn: F)
 ///
 /// See [`.merge_join_by()`](crate::Itertools::merge_join_by) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
-pub struct MergeJoinBy<I: Iterator, J: Iterator, F, T> {
+pub struct MergeJoinBy<I: Iterator, J: Iterator, F> {
     left: PutBack<Fuse<I>>,
     right: PutBack<Fuse<J>>,
     cmp_fn: F,
-    _t: PhantomData<T>,
 }
 
-impl<I, J, F: FnMut(&I, &J) -> Ordering> MergePredicate<I, J, Ordering> for F {
-    type Item = EitherOrBoth<I, J>;
+pub trait OrderingOrBool<I, J> {
+    type MergeResult;
+    fn left(left: I) -> Self::MergeResult;
+    fn right(right: J) -> Self::MergeResult;
+    fn merge(self, left: I, right: J) -> (Option<I>, Option<J>, Self::MergeResult);
+    fn size_hint(left: SizeHint, right: SizeHint) -> SizeHint;
+}
 
-    fn left(left: I) -> Self::Item {
+impl<I, J> OrderingOrBool<I, J> for Ordering {
+    type MergeResult = EitherOrBoth<I, J>;
+    fn left(left: I) -> Self::MergeResult {
         EitherOrBoth::Left(left)
     }
-
-    fn right(right: J) -> Self::Item {
+    fn right(right: J) -> Self::MergeResult {
         EitherOrBoth::Right(right)
     }
-
-    fn merge(&mut self, left: I, right: J) -> (Option<I>, Option<J>, Self::Item) {
-        match self(&left, &right) {
+    fn merge(self, left: I, right: J) -> (Option<I>, Option<J>, Self::MergeResult) {
+        match self {
             Ordering::Equal => (None, None, EitherOrBoth::Both(left, right)),
             Ordering::Less => (None, Some(right), EitherOrBoth::Left(left)),
             Ordering::Greater => (Some(left), None, EitherOrBoth::Right(right)),
         }
     }
-
     fn size_hint(left: SizeHint, right: SizeHint) -> SizeHint {
         let (a_lower, a_upper) = left;
         let (b_lower, b_upper) = right;
-
         let lower = ::std::cmp::max(a_lower, b_lower);
-
         let upper = match (a_upper, b_upper) {
             (Some(x), Some(y)) => x.checked_add(y),
             _ => None,
         };
-
         (lower, upper)
     }
 }
 
-impl<I, J, F: FnMut(&I, &J) -> bool> MergePredicate<I, J, bool> for F {
-    type Item = Either<I, J>;
-
-    fn left(left: I) -> Self::Item {
+impl<I, J> OrderingOrBool<I, J> for bool {
+    type MergeResult = Either<I, J>;
+    fn left(left: I) -> Self::MergeResult {
         Either::Left(left)
     }
-
-    fn right(right: J) -> Self::Item {
+    fn right(right: J) -> Self::MergeResult {
         Either::Right(right)
     }
-
-    fn merge(&mut self, left: I, right: J) -> (Option<I>, Option<J>, Self::Item) {
-        if self(&left, &right) {
+    fn merge(self, left: I, right: J) -> (Option<I>, Option<J>, Self::MergeResult) {
+        if self {
             (None, Some(right), Either::Left(left))
         } else {
             (Some(left), None, Either::Right(right))
         }
     }
-
     fn size_hint(left: SizeHint, right: SizeHint) -> SizeHint {
         // Not ExactSizeIterator because size may be larger than usize
         size_hint::add(left, right)
     }
 }
 
-impl<I, J, F, T> Clone for MergeJoinBy<I, J, F, T>
+impl<I, J, OoB: OrderingOrBool<I, J>, F: FnMut(&I, &J) -> OoB> MergePredicate<I, J> for F {
+    type Item = OoB::MergeResult;
+    fn left(left: I) -> Self::Item {
+        OoB::left(left)
+    }
+    fn right(right: J) -> Self::Item {
+        OoB::right(right)
+    }
+    fn merge(&mut self, left: I, right: J) -> (Option<I>, Option<J>, Self::Item) {
+        let cmp_result = self(&left, &right);
+        OoB::merge(cmp_result, left, right)
+    }
+    fn size_hint(left: SizeHint, right: SizeHint) -> SizeHint {
+        OoB::size_hint(left, right)
+    }
+
+}
+
+impl<I, J, F> Clone for MergeJoinBy<I, J, F>
     where I: Iterator,
           J: Iterator,
           PutBack<Fuse<I>>: Clone,
           PutBack<Fuse<J>>: Clone,
           F: Clone,
 {
-    clone_fields!(left, right, cmp_fn, _t);
+    clone_fields!(left, right, cmp_fn);
 }
 
-impl<I, J, F, T> fmt::Debug for MergeJoinBy<I, J, F, T>
+impl<I, J, F> fmt::Debug for MergeJoinBy<I, J, F>
     where I: Iterator + fmt::Debug,
           I::Item: fmt::Debug,
           J: Iterator + fmt::Debug,
@@ -125,10 +137,10 @@ impl<I, J, F, T> fmt::Debug for MergeJoinBy<I, J, F, T>
     debug_fmt_fields!(MergeJoinBy, left, right);
 }
 
-impl<I, J, F, T> Iterator for MergeJoinBy<I, J, F, T>
+impl<I, J, F> Iterator for MergeJoinBy<I, J, F>
     where I: Iterator,
           J: Iterator,
-          F: MergePredicate<I::Item, J::Item, T>,
+          F: MergePredicate<I::Item, J::Item>,
 {
     type Item = F::Item;
 
