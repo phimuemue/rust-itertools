@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 use std::iter::Fuse;
 use std::fmt;
+use std::marker::PhantomData;
 
 use either::Either;
 
@@ -10,7 +11,7 @@ use crate::size_hint::{self, SizeHint};
 #[cfg(doc)]
 use crate::Itertools;
 
-pub trait MergePredicate<I, J, T>: FnMut(&I, &J) -> T {
+pub trait MergePredicate<I, J, T> {
     type Item;
     fn left(left: I) -> Self::Item;
     fn right(right: J) -> Self::Item;
@@ -31,6 +32,7 @@ pub fn merge_join_by<I, J, F, T>(left: I, right: J, cmp_fn: F)
         left: put_back(left.into_iter().fuse()),
         right: put_back(right.into_iter().fuse()),
         cmp_fn,
+        _t: PhantomData,
     }
 }
 
@@ -38,14 +40,11 @@ pub fn merge_join_by<I, J, F, T>(left: I, right: J, cmp_fn: F)
 ///
 /// See [`.merge_join_by()`](crate::Itertools::merge_join_by) for more information.
 #[must_use = "iterator adaptors are lazy and do nothing unless consumed"]
-pub struct MergeJoinBy<I, J, F, T>
-    where I: Iterator,
-          J: Iterator,
-          F: FnMut(&I::Item, &J::Item) -> T,
-{
+pub struct MergeJoinBy<I: Iterator, J: Iterator, F, T> {
     left: PutBack<Fuse<I>>,
     right: PutBack<Fuse<J>>,
-    cmp_fn: F
+    cmp_fn: F,
+    _t: PhantomData<T>,
 }
 
 impl<I, J, F: FnMut(&I, &J) -> Ordering> MergePredicate<I, J, Ordering> for F {
@@ -112,9 +111,9 @@ impl<I, J, F, T> Clone for MergeJoinBy<I, J, F, T>
           J: Iterator,
           PutBack<Fuse<I>>: Clone,
           PutBack<Fuse<J>>: Clone,
-          F: FnMut(&I::Item, &J::Item) -> T + Clone,
+          F: Clone,
 {
-    clone_fields!(left, right, cmp_fn);
+    clone_fields!(left, right, cmp_fn, _t);
 }
 
 impl<I, J, F, T> fmt::Debug for MergeJoinBy<I, J, F, T>
@@ -122,7 +121,6 @@ impl<I, J, F, T> fmt::Debug for MergeJoinBy<I, J, F, T>
           I::Item: fmt::Debug,
           J: Iterator + fmt::Debug,
           J::Item: fmt::Debug,
-          F: FnMut(&I::Item, &J::Item) -> T,
 {
     debug_fmt_fields!(MergeJoinBy, left, right);
 }
