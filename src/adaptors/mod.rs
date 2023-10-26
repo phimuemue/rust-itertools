@@ -768,15 +768,15 @@ macro_rules! impl_tuple_combination {
             {
                 let Self { c, item, mut iter } = self;
                 init = c
-                    .map(|($($X),*,)| {
+                    .map(|($($X,)*)| {
                         let z = item.clone().unwrap();
-                        (z, $($X),*)
+                        (z, $($X,)*)
                     })
                     .fold(init, &mut f);
                 while let Some(z) = iter.next() {
                     let c: $P<I> = iter.clone().into();
                     init = c
-                        .map(|($($X),*,)| (z.clone(), $($X),*))
+                        .map(|($($X,)*)| (z.clone(), $($X,)*))
                         .fold(init, &mut f);
                 }
                 init
