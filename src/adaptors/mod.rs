@@ -766,13 +766,14 @@ macro_rules! impl_tuple_combination {
             where
                 F: FnMut(B, Self::Item) -> B,
             {
-                let Self { c, item, mut iter } = self;
-                init = c
-                    .map(|($($X,)*)| {
-                        let z = item.clone().unwrap();
-                        (z, $($X,)*)
-                    })
-                    .fold(init, &mut f);
+                let Self { mut c, item, mut iter } = self;
+                if let Some(($($X,)*)) = c.next() { // Do first iteration manually...
+                    let z = item.unwrap(); // ... so that we have to unwrap only once
+                    init = f(init, (z.clone(), $($X,)*));
+                    init = c
+                        .map(|($($X,)*)| (z.clone(), $($X,)*))
+                        .fold(init, &mut f);
+                }
                 while let Some(z) = iter.next() {
                     let c: $P<I> = iter.clone().into();
                     init = c
