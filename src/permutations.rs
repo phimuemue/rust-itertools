@@ -86,9 +86,7 @@ where
         match state {
             &mut PermutationState::Start { k } => {
                 *state = PermutationState::Buffered { k, min_n: k };
-                let latest_idx = k - 1;
-                let indices = (0..(k - 1)).chain(once(latest_idx));
-                Some(indices.map(|i| vals[i].clone()).collect())
+                Some(vals[0..k].to_vec())
             }
             PermutationState::Buffered { ref k, min_n } => {
                 if vals.get_next() {
@@ -103,9 +101,9 @@ where
                     let prev_iteration_count = n - *k + 1;
                     assert!(0 < prev_iteration_count);
 
-                    // Advance the complete-state iterator to the correct point
                     let mut indices : Vec<_> = (0..n).collect();
                     let mut cycles : Vec<_> = ((n - k)..n).rev().collect();
+                    // Advance the complete-state iterator to the correct point
                     for _ in 0..(prev_iteration_count) {
                         if advance(&mut indices, &mut cycles) {
                             *state = PermutationState::End;
