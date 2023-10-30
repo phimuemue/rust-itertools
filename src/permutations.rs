@@ -108,10 +108,7 @@ where
                     let mut cycles : Vec<_> = ((n - k)..n).rev().collect();
                     for _ in 0..(prev_iteration_count) {
                         if advance(&mut indices, &mut cycles) {
-                            *state = PermutationState::LoadedStart {
-                                n: indices.len(),
-                                k: cycles.len(),
-                            };
+                            *state = PermutationState::End;
                             return None;
                         }
                     }
@@ -131,10 +128,7 @@ where
             }
             PermutationState::LoadedOngoing{indices, cycles} => {
                 if advance(indices, cycles) {
-                    *state = PermutationState::LoadedStart {
-                        n: indices.len(),
-                        k: cycles.len(),
-                    };
+                    *state = PermutationState::End;
                     None
                 } else {
                     let k = cycles.len();
