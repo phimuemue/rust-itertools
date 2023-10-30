@@ -92,10 +92,12 @@ where
             }
             PermutationState::Buffered { ref k, min_n } => {
                 if vals.get_next() {
+                    let item = (0..(*k - 1))
+                        .chain(once(*min_n))
+                        .map(|i| vals[i].clone())
+                        .collect();
                     *min_n += 1;
-                    let latest_idx = *min_n - 1;
-                    let indices = (0..(*k - 1)).chain(once(latest_idx));
-                    Some(indices.map(|i| vals[i].clone()).collect())
+                    Some(item)
                 } else {
                     let n = *min_n;
                     let prev_iteration_count = n - *k + 1;
@@ -139,9 +141,7 @@ where
                     Some(indices[0..k].iter().map(|&i| vals[i].clone()).collect())
                 }
             }
-            PermutationState::End => {
-                None
-            }
+            PermutationState::End => None,
         }
     }
 
