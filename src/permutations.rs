@@ -82,72 +82,66 @@ where
     type Item = Vec<I::Item>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        {
-            let Self { vals, state } = self;
-            match state {
-                &mut PermutationState::Start { k } => {
-                    *state = PermutationState::Buffered { k, min_n: k };
-                }
-                PermutationState::Buffered { ref k, min_n } => {
-                    if vals.get_next() {
-                        *min_n += 1;
-                    } else {
-                        let n = *min_n;
-                        let prev_iteration_count = n - *k + 1;
-                        assert!(0 < prev_iteration_count);
-
-                        // Advance the complete-state iterator to the correct point
-                        let mut indices : Vec<_> = (0..n).collect();
-                        let mut cycles : Vec<_> = ((n - k)..n).rev().collect();
-                        let mut found_something = false;
-                        for _ in 0..(prev_iteration_count) {
-                            if advance(&mut indices, &mut cycles) {
-                                assert!(!found_something);
-                                *state = PermutationState::LoadedStart {
-                                    n: indices.len(),
-                                    k: cycles.len(),
-                                };
-                                found_something = true;
-                            }
-                        }
-                        if !found_something {
-                            *state = PermutationState::LoadedOngoing{ cycles, indices };
-                        }
-                    }
-                }
-                PermutationState::LoadedStart{n, k} => {
-                    let indices = (0..*n).collect();
-                    let cycles = ((*n - *k)..*n).rev().collect();
-                    *state = PermutationState::LoadedOngoing { cycles, indices };
-                }
-                PermutationState::LoadedOngoing{indices, cycles} => {
-                    if advance(indices, cycles) {
-                        *state = PermutationState::LoadedStart {
-                            n: indices.len(),
-                            k: cycles.len(),
-                        };
-                    }
-                }
-                PermutationState::End => {}
-            };
-        }
-        let Self { vals, state } = &self;
+        let Self { vals, state } = self;
         match state {
-            PermutationState::Start { .. } => panic!("unexpected iterator state"),
-            PermutationState::Buffered { ref k, min_n } => {
-                let latest_idx = *min_n - 1;
-                let indices = (0..(*k - 1)).chain(once(latest_idx));
-
+            &mut PermutationState::Start { k } => {
+                *state = PermutationState::Buffered { k, min_n: k };
+                let latest_idx = k - 1;
+                let indices = (0..(k - 1)).chain(once(latest_idx));
                 Some(indices.map(|i| vals[i].clone()).collect())
             }
-            PermutationState::LoadedOngoing{
-                ref indices,
-                ref cycles,
-            } => {
-                let k = cycles.len();
-                Some(indices[0..k].iter().map(|&i| vals[i].clone()).collect())
+            PermutationState::Buffered { ref k, min_n } => {
+                if vals.get_next() {
+                    *min_n += 1;
+                    let latest_idx = *min_n - 1;
+                    let indices = (0..(*k - 1)).chain(once(latest_idx));
+                    Some(indices.map(|i| vals[i].clone()).collect())
+                } else {
+                    let n = *min_n;
+                    let prev_iteration_count = n - *k + 1;
+                    assert!(0 < prev_iteration_count);
+
+                    // Advance the complete-state iterator to the correct point
+                    let mut indices : Vec<_> = (0..n).collect();
+                    let mut cycles : Vec<_> = ((n - k)..n).rev().collect();
+                    for _ in 0..(prev_iteration_count) {
+                        if advance(&mut indices, &mut cycles) {
+                            *state = PermutationState::LoadedStart {
+                                n: indices.len(),
+                                k: cycles.len(),
+                            };
+                            return None;
+                        }
+                    }
+                    let k = cycles.len();
+                    let item = Some(indices[0..k].iter().map(|&i| vals[i].clone()).collect());
+                    *state = PermutationState::LoadedOngoing{ cycles, indices };
+                    item
+                }
             }
-            PermutationState::LoadedStart{ .. } | PermutationState::End => None,
+            PermutationState::LoadedStart{n, k} => {
+                let indices : Vec<_> = (0..*n).collect();
+                let cycles : Vec<_> = ((*n - *k)..*n).rev().collect();
+                let k = cycles.len();
+                let item = Some(indices[0..k].iter().map(|&i| vals[i].clone()).collect());
+                *state = PermutationState::LoadedOngoing { cycles, indices };
+                item
+            }
+            PermutationState::LoadedOngoing{indices, cycles} => {
+                if advance(indices, cycles) {
+                    *state = PermutationState::LoadedStart {
+                        n: indices.len(),
+                        k: cycles.len(),
+                    };
+                    None
+                } else {
+                    let k = cycles.len();
+                    Some(indices[0..k].iter().map(|&i| vals[i].clone()).collect())
+                }
+            }
+            PermutationState::End => {
+                None
+            }
         }
     }
 
