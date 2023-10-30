@@ -87,7 +87,7 @@ where
             }
             PermutationState::Buffered { ref k, min_n } => {
                 if vals.get_next() {
-                    let item = (0..(*k - 1))
+                    let item = (0..*k - 1)
                         .chain(once(*min_n))
                         .map(|i| vals[i].clone())
                         .collect();
@@ -96,21 +96,18 @@ where
                 } else {
                     let n = *min_n;
                     let prev_iteration_count = n - *k + 1;
-                    assert!(0 < prev_iteration_count);
-
                     let mut indices: Vec<_> = (0..n).collect();
-                    let mut cycles: Vec<_> = ((n - k)..n).rev().collect();
-                    // Advance the complete-state iterator to the correct point
-                    for _ in 0..(prev_iteration_count) {
+                    let mut cycles: Vec<_> = (n - k..n).rev().collect();
+                    // Advance the state to the correct point.
+                    for _ in 0..prev_iteration_count {
                         if advance(&mut indices, &mut cycles) {
                             *state = PermutationState::End;
                             return None;
                         }
                     }
-                    let k = cycles.len();
-                    let item = Some(indices[0..k].iter().map(|&i| vals[i].clone()).collect());
-                    *state = PermutationState::LoadedOngoing { cycles, indices };
-                    item
+                    let item = indices[0..*k].iter().map(|&i| vals[i].clone()).collect();
+                    *state = PermutationState::LoadedOngoing { indices, cycles };
+                    Some(item)
                 }
             }
             PermutationState::LoadedStart { n, k } => {
@@ -124,11 +121,10 @@ where
             PermutationState::LoadedOngoing { indices, cycles } => {
                 if advance(indices, cycles) {
                     *state = PermutationState::End;
-                    None
-                } else {
-                    let k = cycles.len();
-                    Some(indices[0..k].iter().map(|&i| vals[i].clone()).collect())
+                    return None;
                 }
+                let k = cycles.len();
+                Some(indices[0..k].iter().map(|&i| vals[i].clone()).collect())
             }
             PermutationState::End => None,
         }
