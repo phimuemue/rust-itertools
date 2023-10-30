@@ -102,6 +102,7 @@ where
                         let mut found_something = false;
                         for _ in 0..(prev_iteration_count) {
                             if advance(&mut indices, &mut cycles) {
+                                assert!(!found_something);
                                 *state = PermutationState::LoadedStart {
                                     n: indices.len(),
                                     k: cycles.len(),
