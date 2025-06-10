@@ -1,8 +1,10 @@
+#[cfg(doc)]
+use crate::Itertools;
 #[cfg(feature = "use_std")]
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 
-/// Value returned for the error case of `Itertools::all_equal_value()`.
+/// Value returned for the error case of [`Itertools::all_equal_value`].
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct AllEqualValueError<Item>(pub Option<[Item; 2]>);
 
